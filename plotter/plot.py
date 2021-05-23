@@ -46,4 +46,7 @@ def plot_altitude(time, altitude):
     ax.set_ylabel('m')
     f.savefig('plots/altitude.png')
 
-if __name__ == '__main__': main()
+if __name__ == '__main__':
+    while True:
+        main()
+        time.sleep(60)
