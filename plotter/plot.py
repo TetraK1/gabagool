@@ -17,6 +17,7 @@ def main():
     plot_humidity(time, [dp['data']['humidity'] for dp in data])
     plot_pressure(time, [dp['data']['pressure'] for dp in data])
     plot_altitude(time, [dp['data']['altitude'] for dp in data])
+    plt.close('all')
 
 def plot_temp(time, temp):
     f, ax = plt.subplots()
