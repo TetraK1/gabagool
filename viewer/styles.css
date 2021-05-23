@@ -1,0 +1,21 @@
+body {
+  font-family: Sans-Serif;
+  width: 480px;
+}
+
+table {
+	width: 100%;
+}
+
+table, th, td {
+  border: 1px solid black;
+  border-collapse: collapse;
+}
+
+th {
+	width: 50%;
+}
+
+td {
+	width: 50%;
+}
