@@ -24,6 +24,7 @@ def plot_temp(time, temp):
     ax.plot(time, temp)
     ax.title.set_text("Temperature")
     ax.set_ylabel('°C')
+    f.autofmt_xdate()
     f.savefig('plots/temp.png')
 
 def plot_humidity(time, humidity):
@@ -31,6 +32,7 @@ def plot_humidity(time, humidity):
     ax.plot(time, humidity)
     ax.title.set_text("Humidity")
     ax.set_ylabel('RH%')
+    f.autofmt_xdate()
     f.savefig('plots/humidity.png')
 
 def plot_pressure(time, pressure):
@@ -38,6 +40,7 @@ def plot_pressure(time, pressure):
     ax.plot(time, pressure)
     ax.title.set_text("Barometric Pressure")
     ax.set_ylabel('Pa')
+    f.autofmt_xdate()
     f.savefig('plots/pressure.png')
 
 def plot_altitude(time, altitude):
@@ -45,6 +48,7 @@ def plot_altitude(time, altitude):
     ax.plot(time, altitude)
     ax.title.set_text("Virtual Altitude")
     ax.set_ylabel('m')
+    f.autofmt_xdate()
     f.savefig('plots/altitude.png')
 
 if __name__ == '__main__':
