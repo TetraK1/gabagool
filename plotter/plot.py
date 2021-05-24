@@ -8,8 +8,10 @@ def main():
         data = f.readlines()
     data = data[::60]
     data = [json.loads(dp.strip()) for dp in data]
-    
-    time = [dt.datetime.fromtimestamp(dp['time']) for dp in data]
+    for dp in data: dp['time'] = dt.datetime.fromtimestamp(dp['time'])
+    data = [dp for dp in data if dp['time'] > dt.datetime.now() - dt.timedelta(days=1)]
+
+    time = [dp['time'] for dp in data]
 
     plt.style.use('ggplot')
 
