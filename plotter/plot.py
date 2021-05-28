@@ -2,12 +2,15 @@ import datetime as dt
 import matplotlib.pyplot as plt
 import json
 import time
+import requests
 
 def main():
-    with open('log.txt') as f:
-        data = f.readlines()
+    r = requests.get('https://emberbox.net/curing/api/readings/?last=86400')
+    if r.status_code != 200:
+        print('Getting data failed with status code', r.status_code)
+
+    data = r.json()
     data = data[::60]
-    data = [json.loads(dp.strip()) for dp in data]
     for dp in data: dp['time'] = dt.datetime.fromtimestamp(dp['time'])
     data = [dp for dp in data if dp['time'] > dt.datetime.now() - dt.timedelta(days=1)]
 
@@ -15,10 +18,10 @@ def main():
 
     plt.style.use('ggplot')
 
-    plot_temp(time, [dp['data']['temperature'] for dp in data])
-    plot_humidity(time, [dp['data']['humidity'] for dp in data])
-    plot_pressure(time, [dp['data']['pressure'] for dp in data])
-    plot_altitude(time, [dp['data']['altitude'] for dp in data])
+    plot_temp(time, [dp['temperature'] for dp in data])
+    plot_humidity(time, [dp['humidity'] for dp in data])
+    plot_pressure(time, [dp['pressure'] for dp in data])
+    plot_altitude(time, [dp['altitude'] for dp in data])
     plt.close('all')
 
 def plot_temp(time, temp):
@@ -54,6 +57,4 @@ def plot_altitude(time, altitude):
     f.savefig('plots/altitude.png')
 
 if __name__ == '__main__':
-    while True:
-        main()
-        time.sleep(60)
+    main()
