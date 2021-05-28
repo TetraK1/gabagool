@@ -5,14 +5,14 @@ import time
 import requests
 
 def main():
-    r = requests.get('https://emberbox.net/curing/api/readings/?last=86400')
+    after = (dt.datetime.now() - dt.timedelta(days=1)).timestamp()
+    r = requests.get(f'https://emberbox.net/curing/api/readings/?last=86400&after={after}')
     if r.status_code != 200:
         print('Getting data failed with status code', r.status_code)
 
     data = r.json()
     data = data[::60]
     for dp in data: dp['time'] = dt.datetime.fromtimestamp(dp['time'])
-    data = [dp for dp in data if dp['time'] > dt.datetime.now() - dt.timedelta(days=1)]
 
     time = [dp['time'] for dp in data]
 
