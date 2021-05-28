@@ -57,4 +57,8 @@ def plot_altitude(time, altitude):
     f.savefig('plots/altitude.png')
 
 if __name__ == '__main__':
-    main()
+    while True:
+        print("Updating plots...")
+        main()
+        print("Done")
+        time.sleep(60)
