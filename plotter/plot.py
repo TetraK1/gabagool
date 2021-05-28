@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import json
 import time
 import requests
+import atmos
 
 def main():
     after = (dt.datetime.now() - dt.timedelta(days=1)).timestamp()
@@ -18,10 +19,14 @@ def main():
 
     plt.style.use('ggplot')
 
-    plot_temp(time, [dp['temperature'] for dp in data])
-    plot_humidity(time, [dp['humidity'] for dp in data])
+    temperature = [dp['temperature'] for dp in data]
+    humidity = [dp['humidity'] for dp in data]
+
+    plot_temp(time, temperature)
+    plot_humidity(time, humidity)
     plot_pressure(time, [dp['pressure'] for dp in data])
     plot_altitude(time, [dp['altitude'] for dp in data])
+    plot_abs_humidity(time, temperature, humidity)
     plt.close('all')
 
 def plot_temp(time, temp):
@@ -39,6 +44,16 @@ def plot_humidity(time, humidity):
     ax.set_ylabel('RH%')
     f.autofmt_xdate()
     f.savefig('plots/humidity.png')
+
+def plot_abs_humidity(time, temperature, humidity):
+    abs_humidity = [atmos.calculate('AH', T=d[0] + 273.15, RH=d[1], p=1e5) for d in zip(temperature, humidity)]
+
+    f, ax = plt.subplots()
+    ax.plot(time, abs_humidity)
+    ax.title.set_text("Absolute Humidity")
+    ax.set_ylabel('kg/m^3')
+    f.autofmt_xdate()
+    f.savefig('plots/abs_humidity.png')
 
 def plot_pressure(time, pressure):
     f, ax = plt.subplots()
