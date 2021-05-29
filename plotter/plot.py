@@ -1,5 +1,6 @@
 import datetime as dt
 import matplotlib.pyplot as plt
+import numpy as np
 import json
 import time
 import requests
@@ -7,9 +8,12 @@ import atmos
 
 def main():
     after = (dt.datetime.now() - dt.timedelta(days=1)).timestamp()
+    print("Getting data...")
     r = requests.get(f'https://emberbox.net/curing/api/readings/?last=86400&after={after}')
     if r.status_code != 200:
         print('Getting data failed with status code', r.status_code)
+    print("Done")
+    print("Updating plots...")
 
     data = r.json()
     data = data[::60]
@@ -28,6 +32,7 @@ def main():
     plot_altitude(time, [dp['altitude'] for dp in data])
     plot_abs_humidity(time, temperature, humidity)
     plt.close('all')
+    print("Done")
 
 def plot_temp(time, temp):
     f, ax = plt.subplots()
@@ -44,6 +49,7 @@ def plot_humidity(time, humidity):
     ax.plot(time, humidity)
     ax.set_xlim(min(time))
     ax.set_ylim(bottom=0, top=100)
+    ax.set_yticks(range(0, 110, 10))
     ax.title.set_text("Humidity")
     ax.set_ylabel('RH%')
     f.autofmt_xdate()
@@ -81,7 +87,5 @@ def plot_altitude(time, altitude):
 
 if __name__ == '__main__':
     while True:
-        print("Updating plots...")
         main()
-        print("Done")
         time.sleep(60)
