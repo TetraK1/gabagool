@@ -32,6 +32,8 @@ def main():
 def plot_temp(time, temp):
     f, ax = plt.subplots()
     ax.plot(time, temp)
+    ax.set_xlim(min(time))
+    ax.set_ylim(bottom=0, top=20)
     ax.title.set_text("Temperature")
     ax.set_ylabel('°C')
     f.autofmt_xdate()
@@ -40,6 +42,8 @@ def plot_temp(time, temp):
 def plot_humidity(time, humidity):
     f, ax = plt.subplots()
     ax.plot(time, humidity)
+    ax.set_xlim(min(time))
+    ax.set_ylim(bottom=0, top=100)
     ax.title.set_text("Humidity")
     ax.set_ylabel('RH%')
     f.autofmt_xdate()
@@ -50,6 +54,8 @@ def plot_abs_humidity(time, temperature, humidity):
 
     f, ax = plt.subplots()
     ax.plot(time, abs_humidity)
+    ax.set_xlim(min(time))
+    ax.set_ylim(bottom=0)
     ax.title.set_text("Absolute Humidity")
     ax.set_ylabel('kg/m^3')
     f.autofmt_xdate()
@@ -58,6 +64,7 @@ def plot_abs_humidity(time, temperature, humidity):
 def plot_pressure(time, pressure):
     f, ax = plt.subplots()
     ax.plot(time, pressure)
+    ax.set_xlim(min(time))
     ax.title.set_text("Barometric Pressure")
     ax.set_ylabel('Pa')
     f.autofmt_xdate()
@@ -66,6 +73,7 @@ def plot_pressure(time, pressure):
 def plot_altitude(time, altitude):
     f, ax = plt.subplots()
     ax.plot(time, altitude)
+    ax.set_xlim(min(time))
     ax.title.set_text("Virtual Altitude")
     ax.set_ylabel('m')
     f.autofmt_xdate()
