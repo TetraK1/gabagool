@@ -1,29 +1,44 @@
 import datetime as dt
 import matplotlib.pyplot as plt
+import numpy as np
 import json
 import time
+import requests
+import atmos
 
 def main():
-    with open('log.txt') as f:
-        data = f.readlines()
+    after = (dt.datetime.now() - dt.timedelta(days=1)).timestamp()
+    print("Getting data...")
+    r = requests.get(f'https://emberbox.net/curing/api/readings/?last=86400&after={after}')
+    if r.status_code != 200:
+        print('Getting data failed with status code', r.status_code)
+    print("Done")
+    print("Updating plots...")
+
+    data = r.json()
     data = data[::60]
-    data = [json.loads(dp.strip()) for dp in data]
     for dp in data: dp['time'] = dt.datetime.fromtimestamp(dp['time'])
-    data = [dp for dp in data if dp['time'] > dt.datetime.now() - dt.timedelta(days=1)]
 
     time = [dp['time'] for dp in data]
 
     plt.style.use('ggplot')
 
-    plot_temp(time, [dp['data']['temperature'] for dp in data])
-    plot_humidity(time, [dp['data']['humidity'] for dp in data])
-    plot_pressure(time, [dp['data']['pressure'] for dp in data])
-    plot_altitude(time, [dp['data']['altitude'] for dp in data])
+    temperature = [dp['temperature'] for dp in data]
+    humidity = [dp['humidity'] for dp in data]
+
+    plot_temp(time, temperature)
+    plot_humidity(time, humidity)
+    plot_pressure(time, [dp['pressure'] for dp in data])
+    plot_altitude(time, [dp['altitude'] for dp in data])
+    plot_abs_humidity(time, temperature, humidity)
     plt.close('all')
+    print("Done")
 
 def plot_temp(time, temp):
     f, ax = plt.subplots()
     ax.plot(time, temp)
+    ax.set_xlim(min(time))
+    ax.set_ylim(bottom=0, top=20)
     ax.title.set_text("Temperature")
     ax.set_ylabel('°C')
     f.autofmt_xdate()
@@ -32,14 +47,30 @@ def plot_temp(time, temp):
 def plot_humidity(time, humidity):
     f, ax = plt.subplots()
     ax.plot(time, humidity)
+    ax.set_xlim(min(time))
+    ax.set_ylim(bottom=0, top=100)
+    ax.set_yticks(range(0, 110, 10))
     ax.title.set_text("Humidity")
     ax.set_ylabel('RH%')
     f.autofmt_xdate()
     f.savefig('plots/humidity.png')
 
+def plot_abs_humidity(time, temperature, humidity):
+    abs_humidity = [atmos.calculate('AH', T=d[0] + 273.15, RH=d[1], p=1e5) for d in zip(temperature, humidity)]
+
+    f, ax = plt.subplots()
+    ax.plot(time, abs_humidity)
+    ax.set_xlim(min(time))
+    ax.set_ylim(bottom=0)
+    ax.title.set_text("Absolute Humidity")
+    ax.set_ylabel('kg/m^3')
+    f.autofmt_xdate()
+    f.savefig('plots/abs_humidity.png')
+
 def plot_pressure(time, pressure):
     f, ax = plt.subplots()
     ax.plot(time, pressure)
+    ax.set_xlim(min(time))
     ax.title.set_text("Barometric Pressure")
     ax.set_ylabel('Pa')
     f.autofmt_xdate()
@@ -48,6 +79,7 @@ def plot_pressure(time, pressure):
 def plot_altitude(time, altitude):
     f, ax = plt.subplots()
     ax.plot(time, altitude)
+    ax.set_xlim(min(time))
     ax.title.set_text("Virtual Altitude")
     ax.set_ylabel('m')
     f.autofmt_xdate()

@@ -7,7 +7,7 @@ app.config["DEBUG"] = True
 
 with sqlite3.connect('fridge.db') as conn:
     conn.execute('''CREATE TABLE IF NOT EXISTS "bme280_data" (
-        "time"	INTEGER NOT NULL,
+        "time"	REAL NOT NULL,
         "temperature"	REAL,
         "humidity"	REAL,
         "pressure"	REAL,
