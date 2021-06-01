@@ -42,13 +42,16 @@ while True:
             print("Posting data failed.")
             print(e)
 
-        if msg['data']['temperature'] > 12.5:
-            ser2.write('1'.encode('utf-8'))
-        elif msg['data']['temperature'] < 11.5:
-            ser2.write('0'.encode('utf-8'))
+        if msg['data']['temperature'] > 13:
+            ser2.write(0b10000000.to_bytes(1, 'big'))
+        elif msg['data']['temperature'] < 12:
+            ser2.write(0b00000000.to_bytes(1, 'big'))
 
-        with open("log.txt","a") as f:
-            f.write(json.dumps(msg) + '\n')
+        if msg['data']['humidity'] < 80:
+            ser2.write(0b10000001.to_bytes(1, 'big'))
+        elif msg['data']['humidity'] > 85:
+            ser2.write(0b00000001.to_bytes(1, 'big'))
+
     except Exception as e:
         print(e)
         print("Keyboard Interrupt")
